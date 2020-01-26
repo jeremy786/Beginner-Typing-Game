@@ -410,24 +410,23 @@ function spawnEnemies(){
     var bulletCD =(5-x)/(0.125*x) + 60;
     
 
-    // if(game.shellTimer >= shellCD){
-    //     if(shells.length < 1 + level){
-    //         let num = Math.random()
-    //         let speed = num > 0.66?-2:num>0.33?-1:0;
-    //         var sh = createShell(650,40,speed,0,0,0)
-    //         sprites.push(sh)
-    //         setTimeout(()=>{
-    //             sprites[sprites.indexOf(sh)].ready = true;
-    //         },Math.random()*1000+100 )
-    //         game.shellTimer = 0;
-    //     }
-    // }
-    // else
-    //     game.shellTimer++;
-        
+    if(game.shellTimer >= shellCD){
+        if(shells.length < 1 + Math.round(level/3)){
+            let num = Math.random()
+            let speed = num > 0.66?-2:num>0.33?-1:0;
+            var sh = createShell(650,40,speed,0,0,0)
+            sprites.push(sh)
+            setTimeout(()=>{
+                sprites[sprites.indexOf(sh)].ready = true;
+            },Math.random()*1000+100 )
+            game.shellTimer = 0;
+        }
+    }
+    else
+        game.shellTimer++;
 
     if(game.bulletTimer >= bulletCD){
-        if(bullets.length < level){ 
+        if(bullets.length < Math.floor(level/3)){ 
             let h = Math.random() * 50 + 100;
             var bl = createBullet(650,245,-1,0,0,0);
             sprites.push(bl)
@@ -745,7 +744,7 @@ window.setInterval(()=>{
         apm = action*60/10;
         action = 0;
         document.getElementById("apm").innerHTML = "Speed: "+ (apm + Math.floor(points/1000));
-        game.scrollspeed = (-1  * (apm/100));// * (500*Math.log10(points ** 3))/6000;
+        game.scrollspeed = (-1.5  * (apm/100));// * (500*Math.log10(points ** 3))/6000;
         smooth(game.cscrollspeed,game.scrollspeed*5);
     },1000)
     
