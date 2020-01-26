@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mario Jump Typing</title>
+        <style>
+            body{
+                display:flex;
+                flex-direction: column;
+                /* justify-content: center; */
+                align-items:center;
+                background-image:radial-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.8));
+                width:100vw;
+                height:100vh;
+            }
+            div{
+                position: relative;
+            }
+            canvas{
+                border:1px solid black;
+                z-index: 1;
+            }
+            #apm{
+                position: absolute;
+                top:7%;
+                left:10%;
+            }
+
+            #points{
+                position: absolute;
+                top:7%;
+                right:10%;
+            }
+            #pause{
+                position:absolute;
+                top:150px;
+                left:225px;
+                font-size:50px;
+                display:none;
+                color:red;
+                transform: rotate(-15deg);
+            }
+
+        </style>
+        <script src="Public/JS/game.js" defer></script>
+    </head>
+    <body>
+        <h1>Mario Jump Typer</h1>
+        <div>
+            <canvas id="canvas"></canvas>
+            <p id="apm">0</p>
+            <p id="points">0</p>
+            <p id="pause">paused</p>
+        </div>
+    </body>
+</html>
