@@ -8,7 +8,7 @@
                 flex-direction: column;
                 /* justify-content: center; */
                 align-items:center;
-                background-image:radial-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.8));
+                background-image:radial-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.2));
                 width:100vw;
                 height:100vh;
             }
@@ -39,9 +39,38 @@
                 color:red;
                 transform: rotate(-15deg);
             }
+            #popup{
+                position: absolute;
+                top:0%;
+                left:0%;
+                height: 100%;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                background: rgba(0,0,0,0.8);
+            }
+            #popup div{
+                padding: 2.5% 5%;
+                border:2px inset black;
+                background-color: white;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                flex-direction: column;
+
+            }
+            #popup div div{
+                height:40%;
+                width: 100%;
+            }
+            #dead{
+                visibility:collapse;
+            }
 
         </style>
-        <script src="Public/JS/game.js" defer></script>
+        <script src="public/JS/game.js" defer></script>
     </head>
     <body>
         <h1>Mario Jump Typer</h1>
@@ -50,6 +79,26 @@
             <p id="apm">0</p>
             <p id="points">0</p>
             <p id="pause">paused</p>
+        </div>
+        <div id="popup">
+            <div id="start">
+                <div>
+                    <img src="">
+                    <img src="">
+                    <p>Press the F & J keys alternating to run!<br>
+                    The faster you press then the faster you go!<br>
+                    Press P to pause the game </p>
+                </div>
+                <div>
+                    <img src="">
+                    <p>Space bar to jump!</p>
+                </div>
+                <button onclick="okBtn()">ok!</button>
+            </div>
+            <div id="dead">
+                <p>You dead</p>
+                <button>Restart</button>
+            </div>
         </div>
     </body>
 </html>
