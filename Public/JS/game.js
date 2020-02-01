@@ -123,6 +123,7 @@ function Mario(){
     this.frame=0;
     this.count=0;
     this.state=1;
+    this.alive = true;
     this.collide=false;
     this.ratio=()=>{
         return mario.height/mario.width
@@ -545,7 +546,7 @@ function getAngle(){
 function intersects(x1,y1,obj){
     var x2 = obj.position.x;
     var y2 = obj.position.y;
-    var w = (obj.width * obj.scale);
+    var w =  (obj.width * obj.scale);
     var h =  (obj.height * obj.scale);
 
     if(x1 >= x2 && x1 <= x2 + w)
@@ -563,24 +564,54 @@ function collisionHandler(event){
     var obj2 = event.detail.obj2;
 
     if(obj1 === mario || obj2 === mario){
+
+
+        var obj = obj1 === mario? obj2 : obj1;
+
+        var cx1 = mario.position.x + (mario.width*mario.scale/2);
+        var cy1 = mario.position.y + (mario.height*mario.scale/2);
+    
+        var cx2 = obj.position.x + (obj.width*obj.scale/2);
+        var cy2 = obj.position.y + (obj.height*obj.scale/2);
+    
+        var d =Math.sqrt((cx1- cx2)**2 +(cy1 - cy2) ** 2);
+        //calc angle
+        var a = cx2 - cx1;
+        var b = cy2 - cy1;
+    
+        //var deg1 = Math.atan(b / a);
+        var deg1 = Math.asin(b / d);
+        deg1 = deg1 * 180 / Math.PI;
+        console.log(obj,cx1,cy1,cx2,cy2);
+        if(deg1 > 42 && deg1 < (90+46)){
+            console.log(mario.velocity.y)
+            if(mario.velocity.y >= -20)
+            mario.velocity.y -= 20;
+            points += 100;
+            return;
+        }
+
         clearInterval(clk);
+        clearInterval(ptsClk);
+        clearInterval(apmClk);
+        mario.alive = false;
         window.setTimeout(()=>{
             game.pause = false;
 
-            // var cx1 = obj1.position.x + (obj1.width*obj1.scale/2);
-            // var cy1 = obj1.position.y + (obj1.height*obj1.scale/2);
+            var cx1 = obj1.position.x + (obj1.width*obj1.scale/2);
+            var cy1 = obj1.position.y + (obj1.height*obj1.scale/2);
         
-            // var cx2 = obj2.position.x + (obj2.width*obj2.scale/2);
-            // var cy2 = obj2.position.y + (obj2.height*obj2.scale/2);
+            var cx2 = obj2.position.x + (obj2.width*obj2.scale/2);
+            var cy2 = obj2.position.y + (obj2.height*obj2.scale/2);
         
-            // var d =Math.sqrt((cx1- cx2)**2 +(cy1 - cy2) ** 2);
-            // //calc angle
-            // var a = cx2 - cx1;
-            // var b = cy2 - cy1;
+            var d =Math.sqrt((cx1- cx2)**2 +(cy1 - cy2) ** 2);
+            //calc angle
+            var a = cx2 - cx1;
+            var b = cy2 - cy1;
         
-            // //var deg1 = Math.atan(b / a);
-            // var deg1 = Math.asin(b / d);
-            // var deg2 = deg1 + Math.PI;
+            //var deg1 = Math.atan(b / a);
+            var deg1 = Math.asin(b / d);
+            //var deg2 = deg1 + Math.PI;
             // //calc r1
             // var a1 = obj1.width*obj1.scale/2;
             // var b1 = obj1.height*obj1.scale/2;
@@ -597,8 +628,7 @@ function collisionHandler(event){
 
             // ctx.strokeStyle = "#FF0000";
             // ctx.moveTo(cx1, cy1);
-            // ctx.lineTo(r1*Math.cos(deg1)+cx1, r1*Math.sin(deg1)+cy1);
-
+            // ctx.lineTo(d*Math.cos(deg1)+cx1, d*Math.sin(deg1)+cy1);
 
             // ctx.strokeStyle = "#00FF00";
             // ctx.moveTo(cx2, cy2);
@@ -611,9 +641,11 @@ function collisionHandler(event){
             // ctx.ellipse(cx1,cy1,a1,b1,0,0,Math.PI*2);
             // ctx.ellipse(cx2,cy2,a2,b2,0,0,Math.PI*2);
 
-            ctx.strokeRect(obj1.position.x,obj1.position.y,obj1.width*obj1.scale,obj1.height*obj1.scale)
-            ctx.strokeRect(obj2.position.x,obj2.position.y,obj2.width*obj2.scale,obj2.height*obj2.scale)
-            ctx.stroke();
+            
+
+            // ctx.strokeRect(obj1.position.x,obj1.position.y,obj1.width*obj1.scale,obj1.height*obj1.scale)
+            // ctx.strokeRect(obj2.position.x,obj2.position.y,obj2.width*obj2.scale,obj2.height*obj2.scale)
+            // ctx.stroke();
 
         },1)
     }
@@ -626,7 +658,6 @@ function collisionHandler(event){
 
         sprites[i].velocity.x = x2;
         sprites[j].velocity.x = x1;
-        console.log("shell Collide")
 
         setTimeout(()=>{
             sprites[i].collide = sprites[j].collide = false;
@@ -646,6 +677,8 @@ for(var i = 0; i < 7; i++)
     for(var j = 0; j < 5;j++)
         tileset.tile.push({x:16+(i*72),y:24+(j*72)})
 
+
+
 var image = new Image()
 var shell = new Image();
 var bb = new Image();
@@ -657,6 +690,8 @@ tile1.src = tileset.SS;
 image.src = mario.SS;
 shell.src = shell1.SS;
 bb.src = bb1.SS;
+
+
 
 image.onload = ()=>{
     console.log("mario SS done")
@@ -737,21 +772,46 @@ window.addEventListener("keydown",(event)=>{
     })
 
     
-window.setInterval(()=>{
-        if(game.pause)
+
+
+function start(){
+
+    apmClk = window.setInterval(()=>{
+        if(game.pause || !mario.alive)
             return;
-    
         apm = action*60/10;
         action = 0;
         document.getElementById("apm").innerHTML = "Speed: "+ (apm + Math.floor(points/1000));
         game.scrollspeed = (-1.5  * (apm/100));// * (500*Math.log10(points ** 3))/6000;
         smooth(game.cscrollspeed,game.scrollspeed*5);
     },1000)
-    
-window.setInterval(()=>{
-        if(game.pause)
-            return
 
+    ptsClk = window.setInterval(()=>{
+        if(game.pause || !mario.alive)
+            return
         points += Math.round(apm/10)
         document.getElementById("points").innerHTML =  "points: " + points;
     },100)
+}
+
+var apmClk; //= window.setInterval(()=>{
+//         if(game.pause || !mario.alive)
+//             return;
+//         apm = action*60/10;
+//         action = 0;
+//         document.getElementById("apm").innerHTML = "Speed: "+ (apm + Math.floor(points/1000));
+//         game.scrollspeed = (-1.5  * (apm/100));// * (500*Math.log10(points ** 3))/6000;
+//         smooth(game.cscrollspeed,game.scrollspeed*5);
+//     },1000)
+    
+var ptsClk; //= window.setInterval(()=>{
+//         if(game.pause || !mario.alive)
+//             return
+//         points += Math.round(apm/10)
+//         document.getElementById("points").innerHTML =  "points: " + points;
+//     },100)
+
+function okBtn(){
+    document.getElementById("popup").style.display = "none";
+    start();
+}
